@@ -30,17 +30,17 @@ float elapsed_time(long long start_time, long long end_time) {
 }
 /*************************************************************************/
 
-void axpy_intrinsics(double a, double *dx, double *dy, int n); 
+void axpy_intrinsics(float a, float *dx, float *dy, int n); 
 
 // Ref version
-void axpy_ref(double a, double *dx, double *dy, int n) {
+void axpy_ref(float a, float *dx, float *dy, int n) {
    int i;
    for (i=0; i<n; i++) {
       dy[i] += a*dx[i];
    }
 }
 
-void init_vector(double *pv, long n, double value)
+void init_vector(float *pv, long n, float value)
 {
    for (int i=0; i<n; i++) pv[i]= value;
 }
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     long long start,end;
     start = get_time();
 
-    double a=1.0;
+    float a=1.0;
     long n;
 
     if (argc == 2)
@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
 
 
     /* Allocate the source and result vectors */
-    double *dx     = (double*)malloc(n*sizeof(double));
-    double *dy     = (double*)malloc(n*sizeof(double));
-    double *dy_ref = (double*)malloc(n*sizeof(double));
+    float *dx     = (float*)malloc(n*sizeof(float));
+    float *dy     = (float*)malloc(n*sizeof(float));
+    float *dy_ref = (float*)malloc(n*sizeof(float));
  
 
     init_vector(dx, n, 1.0);

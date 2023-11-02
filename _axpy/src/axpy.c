@@ -11,7 +11,9 @@
 
 #include "../../common/vector_defines.h"
 
-void axpy_intrinsics(double a, double *dx, double *dy, int n) {
+//Main Codes --> 64 bits
+
+/* void axpy_intrinsics(float a, float *dx, float *dy, int n) {
   int i;
 
   long gvl = __builtin_epi_vsetvl(n, __epi_e64, __epi_m1);
@@ -28,4 +30,28 @@ void axpy_intrinsics(double a, double *dx, double *dy, int n) {
   }
 
 FENCE();
+} */
+
+
+//New change --> 32 bits 
+
+void axpy_intrinsics(float a, float *dx, float *dy, int n) {
+  int i;
+
+  long gvl = __builtin_epi_vsetvl(n, __epi_e32, __epi_m1);
+  _MMR_f32 v_a = _MM_SET_f32(a, gvl);
+  
+  for (i = 0; i < n;) {
+    gvl = __builtin_epi_vsetvl(n - i, __epi_e32, __epi_m1);
+    _MMR_f32 v_dx = _MM_LOAD_f32(&dx[i], gvl);
+    _MMR_f32 v_dy = _MM_LOAD_f32(&dy[i], gvl);
+    _MMR_f32 v_res = _MM_MACC_f32(v_dy, v_a, v_dx, gvl);
+    _MM_STORE_f32(&dy[i], v_res, gvl);
+
+    i += gvl;
+  }
+
+FENCE();
 }
+
+
